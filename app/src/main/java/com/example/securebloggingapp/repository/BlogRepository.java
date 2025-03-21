@@ -18,7 +18,7 @@ public class BlogRepository {
 
     private DatabaseHelper dbHelper;
 
-    private BlogRepository(Context context) {
+    public BlogRepository(Context context) {
         dbHelper = new DatabaseHelper(context);
     }
 
