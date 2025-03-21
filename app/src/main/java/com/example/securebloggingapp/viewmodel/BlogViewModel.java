@@ -20,10 +20,24 @@ public class BlogViewModel extends AndroidViewModel {
 
     public BlogViewModel(@NotNull Application application) {
         super(application);
-
         repository = new BlogRepository(application);
         blogList = repository.getAllBlogs();
+    }
 
+    public LiveData<List<BlogPost>> getAllBlogs() {
+        return blogList;
+    }
 
+    public void insertBlog(BlogPost post) {
+        repository.insertBlog(post);
+    }
+
+    public void delete(int id) {
+        repository.deleteBlog(id);
+    }
+
+    public void update(BlogPost post) {
+        repository.updateBlog(post);
+    }
 
 }
