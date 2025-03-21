@@ -72,6 +72,15 @@ public class BlogAdapter extends RecyclerView.Adapter<BlogAdapter.BlogViewHolder
         notifyDataSetChanged();
     }
 
+    // ✅ New method to update data dynamically
+    public void updateData(List<BlogPost> newPosts) {
+        originalList.clear();
+        originalList.addAll(newPosts);
+        blogList.clear();
+        blogList.addAll(newPosts);
+        notifyDataSetChanged();
+    }
+
     public static class BlogViewHolder extends RecyclerView.ViewHolder {
         TextView title, dateTime;
         ImageView image;
@@ -81,7 +90,6 @@ public class BlogAdapter extends RecyclerView.Adapter<BlogAdapter.BlogViewHolder
             title = itemView.findViewById(R.id.postTitle);
             dateTime = itemView.findViewById(R.id.postDate);
             image = itemView.findViewById(R.id.postImage);
-
         }
     }
 }

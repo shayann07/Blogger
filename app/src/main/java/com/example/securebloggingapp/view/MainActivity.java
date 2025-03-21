@@ -1,3 +1,4 @@
+// ✅ FINAL PATCH - MainActivity.java Manual DB Refresh on Resume
 package com.example.securebloggingapp.view;
 
 import android.content.Intent;
@@ -13,31 +14,32 @@ import com.example.securebloggingapp.R;
 import com.example.securebloggingapp.adapter.BlogAdapter;
 import com.example.securebloggingapp.viewmodel.BlogViewModel;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
     private BlogViewModel blogViewModel;
     private BlogAdapter adapter;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        SearchView searchView = findViewById(R.id.searchView);
+        adapter = new BlogAdapter(this, new ArrayList<>(), post -> {
+            Intent intent = new Intent(MainActivity.this, ViewPostActivity.class);
+            intent.putExtra("BLOG_ID", post.getId());
+            startActivity(intent);
+        });
+        recyclerView.setAdapter(adapter);
+
         blogViewModel = new ViewModelProvider(this).get(BlogViewModel.class);
 
-        blogViewModel.getAllBlogs().observe(this, blogPosts -> {
-            adapter = new BlogAdapter(this, blogPosts, post -> {
-                Intent intent = new Intent(MainActivity.this, ViewPostActivity.class);
-                intent.putExtra("BLOG_ID", post.getId());
-                startActivity(intent);
-            });
-            recyclerView.setAdapter(adapter);
-        });
-
+        SearchView searchView = findViewById(R.id.searchView);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -55,5 +57,12 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.fabAdd).setOnClickListener(view -> {
             startActivity(new Intent(MainActivity.this, AddEditActivity.class));
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // ✅ Force manual DB pull and UI update
+        adapter.updateData(blogViewModel.fetchBlogsNow());
     }
 }

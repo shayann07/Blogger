@@ -1,43 +1,30 @@
+// ✅ FINAL PATCH - BlogViewModel.java exposes fetchBlogsNow()
 package com.example.securebloggingapp.viewmodel;
 
 import android.app.Application;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
 
 import com.example.securebloggingapp.model.BlogPost;
 import com.example.securebloggingapp.repository.BlogRepository;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 
 public class BlogViewModel extends AndroidViewModel {
-
-
     private BlogRepository repository;
-    private LiveData<List<BlogPost>> blogList;
 
-    public BlogViewModel(@NotNull Application application) {
+    public BlogViewModel(@NonNull Application application) {
         super(application);
         repository = new BlogRepository(application);
-        blogList = repository.getAllBlogs();
     }
 
-    public LiveData<List<BlogPost>> getAllBlogs() {
-        return blogList;
+    // ✅ Manual pull for fresh data
+    public List<BlogPost> fetchBlogsNow() {
+        return repository.fetchBlogsNow();
     }
 
     public void insert(BlogPost post) {
         repository.insertBlog(post);
     }
-
-    public void delete(int id) {
-        repository.deleteBlog(id);
-    }
-
-    public void update(BlogPost post) {
-        repository.updateBlog(post);
-    }
-
 }

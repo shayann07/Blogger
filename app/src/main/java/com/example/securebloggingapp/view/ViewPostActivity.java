@@ -1,3 +1,4 @@
+// ✅ FINAL PATCH - ViewPostActivity.java Manual DB Pull
 package com.example.securebloggingapp.view;
 
 import android.content.Intent;
@@ -36,14 +37,14 @@ public class ViewPostActivity extends AppCompatActivity {
         int blogId = getIntent().getIntExtra("BLOG_ID", -1);
         blogViewModel = new ViewModelProvider(this).get(BlogViewModel.class);
 
-        blogViewModel.getAllBlogs().observe(this, blogs -> {
-            for (BlogPost post : blogs) {
-                if (post.getId() == blogId) {
-                    blogPost = post;
-                    showData();
-                }
+        // ✅ Manual DB pull to get the specific post
+        for (BlogPost post : blogViewModel.fetchBlogsNow()) {
+            if (post.getId() == blogId) {
+                blogPost = post;
+                showData();
+                break;
             }
-        });
+        }
 
         btnShare.setOnClickListener(v -> sharePost());
     }
