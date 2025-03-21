@@ -34,6 +34,12 @@ android {
 dependencies {
 
     implementation(libs.appcompat)
+    implementation(libs.recyclerview)
+    implementation(libs.lifecycle.extensions)
+    implementation(libs.glide)
+    annotationProcessor(libs.compiler)
+    implementation(libs.lifecycle.livedata)
+    implementation(libs.lifecycle.viewmodel)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)

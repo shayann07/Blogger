@@ -55,7 +55,7 @@ public class BlogRepository {
         List<BlogPost> blogList = new ArrayList<>();
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(DatabaseHelper.TABLE_BLOG, null, null, null, null, null, DatabaseHelper.COLUMN_ID + "DESC");
+        Cursor cursor = db.query(DatabaseHelper.TABLE_BLOG, null, null, null, null, null, "id DESC");
 
         if (cursor.moveToFirst()) {
             do {

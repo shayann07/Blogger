@@ -28,7 +28,7 @@ public class BlogViewModel extends AndroidViewModel {
         return blogList;
     }
 
-    public void insertBlog(BlogPost post) {
+    public void insert(BlogPost post) {
         repository.insertBlog(post);
     }
 
