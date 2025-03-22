@@ -1,3 +1,4 @@
+// BlogRepository.java
 package com.example.securebloggingapp.repository;
 
 import android.content.ContentValues;
@@ -18,7 +19,6 @@ public class BlogRepository {
         dbHelper = new DatabaseHelper(context);
     }
 
-    // 🔥 Manual fetch method for fresh data pull
     public List<BlogPost> fetchBlogsNow() {
         List<BlogPost> blogList = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -49,6 +49,34 @@ public class BlogRepository {
         values.put(DatabaseHelper.COLUMN_IMAGE_PATH, post.getImagePath());
         values.put(DatabaseHelper.COLUMN_DATE_TIME, post.getDateTime());
         db.insert(DatabaseHelper.TABLE_BLOG, null, values);
+        db.close();
+    }
+
+    public void updateBlog(BlogPost post) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(DatabaseHelper.COLUMN_TITLE, post.getTitle());
+        values.put(DatabaseHelper.COLUMN_CONTENT, post.getContent());
+        values.put(DatabaseHelper.COLUMN_IMAGE_PATH, post.getImagePath());
+        values.put(DatabaseHelper.COLUMN_DATE_TIME, post.getDateTime());
+        db.update(DatabaseHelper.TABLE_BLOG, values, DatabaseHelper.COLUMN_ID + " = ?",
+                new String[]{String.valueOf(post.getId())});
+        db.close();
+    }
+
+    public void deleteBlog(int id) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.delete(DatabaseHelper.TABLE_BLOG, DatabaseHelper.COLUMN_ID + " = ?",
+                new String[]{String.valueOf(id)});
+        db.close();
+    }
+
+    public void deleteBlogs(List<Integer> ids) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        for (int id : ids) {
+            db.delete(DatabaseHelper.TABLE_BLOG, DatabaseHelper.COLUMN_ID + " = ?",
+                    new String[]{String.valueOf(id)});
+        }
         db.close();
     }
 }

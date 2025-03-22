@@ -2,18 +2,42 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/toolbar">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
 
     <SearchView
         android:id="@+id/searchView"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:queryHint="Search Blog Posts" />
+        android:queryHint="Search Blog Posts"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"/>
+     <TextView
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="delete"
+         android:id="@+id/btnDelete"
+         android:layout_alignParentEnd="true"
+         android:layout_centerVertical="true"
+         android:layout_marginEnd="10dp"
+         android:visibility="gone"
+         android:textSize="16dp"
+         android:textColor="@color/black"/>
+</RelativeLayout>
+    </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/searchView"
+        android:layout_below="@id/toolbar"
         android:padding="16dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -24,6 +48,7 @@
         android:layout_alignParentBottom="true"
         android:layout_margin="16dp"
         android:backgroundTint="@color/colorPrimary"
+        android:contentDescription="TODO"
         android:src="@android:drawable/ic_input_add" />
 
 </RelativeLayout>
