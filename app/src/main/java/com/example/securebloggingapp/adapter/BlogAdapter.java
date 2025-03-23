@@ -6,14 +6,18 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
+
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.example.securebloggingapp.R;
 import com.example.securebloggingapp.model.BlogPost;
+
 import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,9 +61,37 @@ public class BlogAdapter extends RecyclerView.Adapter<BlogAdapter.BlogViewHolder
         holder.dateTime.setText(post.getDateTime());
         Glide.with(context).load(post.getImagePath()).into(holder.image);
 
-        // Show checkbox only in multi-select mode
-        holder.checkBoxSelect.setVisibility(isMultiSelectMode ? View.VISIBLE : View.GONE);
-        holder.checkBoxSelect.setChecked(selectedPosts.contains(post));
+        // Show radio button only in multi-select mode
+        holder.radioButton.setVisibility(isMultiSelectMode ? View.VISIBLE : View.GONE);
+
+        // Detach any previous listener to avoid spurious triggers
+        holder.radioButton.setOnCheckedChangeListener(null);
+        holder.radioButton.setChecked(selectedPosts.contains(post));
+
+        // Attach a new listener
+        holder.radioButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked && !selectedPosts.contains(post)) {
+                // If you want radio behavior (single selection) clear previous selections:
+                // selectedPosts.clear();
+                // notifyDataSetChanged();
+                // selectedPosts.add(post);
+
+                // For multi-select with radio button appearance:
+                selectedPosts.add(post);
+            } else if (!isChecked && selectedPosts.contains(post)) {
+                selectedPosts.remove(post);
+            }
+
+            // Notify selection count update
+            if (selectionListener != null) {
+                selectionListener.onSelectionChanged(selectedPosts.size());
+            }
+
+            // Exit multi-select mode if no items are selected
+            if (selectedPosts.isEmpty()) {
+                setMultiSelectMode(false);
+            }
+        });
 
         // Click to select/deselect in multi-select mode
         holder.itemView.setOnClickListener(v -> {
@@ -78,23 +110,6 @@ public class BlogAdapter extends RecyclerView.Adapter<BlogAdapter.BlogViewHolder
             toggleSelection(post, holder);
             return true; // Consume the event
         });
-        holder.checkBoxSelect.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked && !selectedPosts.contains(post)) {
-                selectedPosts.add(post);
-            } else if (!isChecked && selectedPosts.contains(post)) {
-                selectedPosts.remove(post);
-            }
-
-            // Notify MainActivity to update delete button visibility
-            if (selectionListener != null) {
-                selectionListener.onSelectionChanged(selectedPosts.size());
-            }
-
-            // Exit multi-select mode if no items are selected
-            if (selectedPosts.isEmpty()) {
-                setMultiSelectMode(false);
-            }
-        });
     }
 
     @Override
@@ -105,10 +120,10 @@ public class BlogAdapter extends RecyclerView.Adapter<BlogAdapter.BlogViewHolder
     private void toggleSelection(BlogPost post, BlogViewHolder holder) {
         if (selectedPosts.contains(post)) {
             selectedPosts.remove(post); // Remove from selected list
-            holder.checkBoxSelect.setChecked(false);
+            holder.radioButton.setChecked(false);
         } else {
             selectedPosts.add(post); // Add to selected list
-            holder.checkBoxSelect.setChecked(true);
+            holder.radioButton.setChecked(true);
         }
 
         // Notify MainActivity to update delete button visibility
@@ -170,14 +185,14 @@ public class BlogAdapter extends RecyclerView.Adapter<BlogAdapter.BlogViewHolder
     public static class BlogViewHolder extends RecyclerView.ViewHolder {
         TextView title, dateTime;
         ImageView image;
-        CheckBox checkBoxSelect;
+        RadioButton radioButton;
 
         public BlogViewHolder(@NotNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.postTitle);
             dateTime = itemView.findViewById(R.id.postDate);
             image = itemView.findViewById(R.id.postImage);
-            checkBoxSelect = itemView.findViewById(R.id.checkBox);
+            radioButton = itemView.findViewById(R.id.checkBox);
         }
     }
 }
