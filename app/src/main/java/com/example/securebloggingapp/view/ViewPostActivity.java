@@ -1,6 +1,7 @@
 package com.example.securebloggingapp.view;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
@@ -22,7 +23,6 @@ import com.example.securebloggingapp.model.BlogPost;
 import com.example.securebloggingapp.viewmodel.BlogViewModel;
 
 import java.io.File;
-import java.util.List;
 
 public class ViewPostActivity extends AppCompatActivity {
 
@@ -33,6 +33,7 @@ public class ViewPostActivity extends AppCompatActivity {
     private Button btnShare;
     private Toolbar toolbar;
     private int blogId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,7 +46,14 @@ public class ViewPostActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-         blogId = getIntent().getIntExtra("BLOG_ID", -1);
+
+        Drawable overflowIcon = toolbar.getOverflowIcon();
+        if (overflowIcon != null) {
+            overflowIcon.setTint(getResources().getColor(R.color.on_primary));
+            toolbar.setOverflowIcon(overflowIcon);
+        }
+
+        blogId = getIntent().getIntExtra("BLOG_ID", -1);
         blogViewModel = new ViewModelProvider(this).get(BlogViewModel.class);
 
         // ✅ Pull blog post from DB
@@ -100,9 +108,10 @@ public class ViewPostActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.toolbar_menu, menu);
+        inflater.inflate(R.menu.main_menu, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();

@@ -1,6 +1,8 @@
 package com.example.securebloggingapp.adapter;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -148,8 +150,10 @@ public class BlogAdapter extends RecyclerView.Adapter<BlogAdapter.BlogViewHolder
         if (!multiSelect) {
             selectedPosts.clear();
         }
-        notifyDataSetChanged();
+        // Delay notifyDataSetChanged() so that it runs after the current layout pass
+        new Handler(Looper.getMainLooper()).postDelayed(() -> notifyDataSetChanged(), 50);
     }
+
 
     public List<BlogPost> getSelectedPosts() {
         return selectedPosts;

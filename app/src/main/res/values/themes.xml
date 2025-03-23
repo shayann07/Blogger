@@ -1,9 +1,57 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Base.Theme.SecureBlogging" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
+
+    <!-- Base theme -->
+    <style name="Theme.MyBlog" parent="Theme.Material3.DynamicColors.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primary_color</item>
+        <item name="colorOnPrimary">@color/on_primary</item>
+        <item name="colorSurface">@color/surface_color</item>
+        <item name="colorError">@color/error_color</item>
+        <item name="actionBarStyle">@style/Widget.MyBlog.Toolbar</item>
+
+        <!-- Keep other component styles -->
+        <item name="materialButtonStyle">@style/Widget.MyBlog.Button</item>
+        <item name="textInputStyle">@style/Widget.MyBlog.TextInput</item>
+    </style>
+
+    <!-- Custom Toolbar Style -->
+    <style name="Widget.MyBlog.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="titleTextColor">@color/on_primary</item>
+        <item name="navigationIconTint">@color/on_primary</item>
+        <item name="android:background">@color/primary_color</item>
+    </style>
+
+    <!-- Keep other existing styles -->
+    <style name="Widget.MyBlog.Button" parent="Widget.Material3.Button">
+        <item name="android:elevation">8dp</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.MyBlog.MediumComponent</item>
+    </style>
+
+    <style name="Widget.MyBlog.TextInput" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">16dp</item>
+        <item name="boxCornerRadiusTopEnd">16dp</item>
+        <item name="boxCornerRadiusBottomStart">16dp</item>
+        <item name="boxCornerRadiusBottomEnd">16dp</item>
+    </style>
+
+    <style name="ShapeAppearance.MyBlog.MediumComponent" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
+    <!-- Custom shape for the toolbar card -->
+    <style name="ShapeAppearance.MyBlog.ToolbarCard" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">0dp</item>
+        <item name="cornerSizeTopRight">0dp</item>
+        <item name="cornerSizeBottomLeft">38dp</item>
+        <item name="cornerSizeBottomRight">38dp</item>
+    </style>
+
 
     <style name="Theme.SecureBlogging" parent="Base.Theme.SecureBlogging" />
 </resources>

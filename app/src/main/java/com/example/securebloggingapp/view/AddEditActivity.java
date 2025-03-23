@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.example.securebloggingapp.R;
 import com.example.securebloggingapp.model.BlogPost;
 import com.example.securebloggingapp.viewmodel.BlogViewModel;
+import com.google.android.material.card.MaterialCardView;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,21 +33,26 @@ public class AddEditActivity extends AppCompatActivity {
 
     private EditText titleEdit, contentEdit;
     private ImageView imageView;
-    private Button btnSave, btnUpdate;
+    private Button btnSelectImage, btnSave, btnUpdate;
+    private MaterialCardView imageCard;
     private BlogViewModel blogViewModel;
     private Uri selectedImageUri;
     private String savedImagePath = "";
     private int blogId = -1; // Default invalid ID
     private boolean isEditMode = false; // Flag for editing mode
     private Toolbar toolbar;
-    private final ActivityResultLauncher<Intent> imagePickerLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    selectedImageUri = result.getData().getData();
-                    savedImagePath = saveImageToInternalStorage(selectedImageUri); // ✅ Save new image path
-                    Glide.with(this).load(new File(savedImagePath)).into(imageView);
-                }
-            });
+
+    private final ActivityResultLauncher<Intent> imagePickerLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+            selectedImageUri = result.getData().getData();
+            savedImagePath = saveImageToInternalStorage(selectedImageUri); // Save new image path
+            Glide.with(this).load(new File(savedImagePath)).into(imageView);
+            // Hide the select image button once an image is loaded
+            btnSelectImage.setVisibility(Button.GONE);
+            // Set the stroke width of the card to 0
+            imageCard.setStrokeWidth(0);
+        }
+    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,19 +62,24 @@ public class AddEditActivity extends AppCompatActivity {
         titleEdit = findViewById(R.id.editTitle);
         contentEdit = findViewById(R.id.editContent);
         imageView = findViewById(R.id.imageView);
+        btnSelectImage = findViewById(R.id.btnSelectImage);
         btnSave = findViewById(R.id.btnSave);
         btnUpdate = findViewById(R.id.btnUpdate);
         toolbar = findViewById(R.id.toolbar);
+        imageCard = findViewById(R.id.imageCard);
+
         setSupportActionBar(toolbar);
+        // Set the navigation click listener to go back when ic_close is pressed
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
         blogViewModel = new ViewModelProvider(this).get(BlogViewModel.class);
 
+        // When clicking on the image or the select button, open gallery
         imageView.setOnClickListener(v -> pickImageFromGallery());
+        btnSelectImage.setOnClickListener(v -> pickImageFromGallery());
 
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        // ✅ Check if we're editing an existing post
+        // Check if we're editing an existing post
         Intent intent = getIntent();
         if (intent.hasExtra("EDIT_MODE")) {
             isEditMode = intent.getBooleanExtra("EDIT_MODE", false);
@@ -80,6 +91,10 @@ public class AddEditActivity extends AppCompatActivity {
 
                 if (savedImagePath != null && !savedImagePath.isEmpty()) {
                     Glide.with(this).load(new File(savedImagePath)).into(imageView);
+                    // Hide select button if an image already exists
+                    btnSelectImage.setVisibility(Button.GONE);
+                    // Remove stroke from image card
+                    imageCard.setStrokeWidth(0);
                 }
 
                 btnSave.setVisibility(Button.GONE);
@@ -133,8 +148,7 @@ public class AddEditActivity extends AppCompatActivity {
         String title = titleEdit.getText().toString();
         String content = contentEdit.getText().toString();
 
-        BlogPost updatedPost = new BlogPost(blogId, title, content, savedImagePath,
-                new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(new Date()));
+        BlogPost updatedPost = new BlogPost(blogId, title, content, savedImagePath, new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(new Date()));
 
         blogViewModel.update(updatedPost);
         finish();

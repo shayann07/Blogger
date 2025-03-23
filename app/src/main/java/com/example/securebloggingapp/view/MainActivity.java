@@ -4,14 +4,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.SearchView;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.securebloggingapp.R;
 import com.example.securebloggingapp.adapter.BlogAdapter;
 import com.example.securebloggingapp.model.BlogPost;
 import com.example.securebloggingapp.viewmodel.BlogViewModel;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -66,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, AddEditActivity.class))
         );
 
-        // Delete selected posts
         btnDelete.setOnClickListener(v -> {
             List<BlogPost> selected = adapter.getSelectedPosts();
             if (!selected.isEmpty()) {
@@ -75,9 +79,11 @@ public class MainActivity extends AppCompatActivity {
                     ids.add(post.getId());
                 }
                 blogViewModel.deleteMultiple(ids);
-                adapter.setMultiSelectMode(false);
-                adapter.clearSelection();
-                adapter.updateData(blogViewModel.fetchBlogsNow());
+                recyclerView.post(() -> {
+                    adapter.setMultiSelectMode(false);
+                    adapter.clearSelection();
+                    adapter.updateData(blogViewModel.fetchBlogsNow());
+                });
             }
         });
     }
